@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Calendar } from './components/Calendar';
 import { VacationRequestForm } from './components/VacationRequestForm';
 import { FilterPanel } from './components/FilterPanel';
 import type { VacationRequest, CalendarEvent, FilterOptions, TeamMember } from './types';
-import { vacationUtils, dateUtils } from './utils/dateUtils';
+import { vacationUtils } from './utils/dateUtils';
 import { exportUtils } from './utils/exportUtils';
 import { sampleTeamMembers, sampleVacationRequests, getCurrentUser } from './data/mockData';
 import './App.css';
@@ -48,12 +48,6 @@ function App() {
   const handleNewRequest = (date?: Date) => {
     setSelectedDate(date);
     setSelectedEvent(undefined);
-    setIsFormOpen(true);
-  };
-
-  const handleEditRequest = (event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setSelectedDate(undefined);
     setIsFormOpen(true);
   };
 

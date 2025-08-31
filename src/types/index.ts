@@ -32,7 +32,7 @@ export interface CalendarEvent {
   type: 'vacation' | 'sick' | 'personal' | 'holiday';
   employeeId: string;
   employeeName: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
   color?: string;
 }
 

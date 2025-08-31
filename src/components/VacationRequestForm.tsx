@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Clock, User, FileText } from 'lucide-react';
-import { format, addDays } from 'date-fns';
+import { Calendar, Clock, User } from 'lucide-react';
+import { format } from 'date-fns';
 import type { VacationRequest, TeamMember } from '../types';
 import { dateUtils } from '../utils/dateUtils';
 import styles from '../styles/VacationRequestForm.module.css';
@@ -25,9 +25,9 @@ export const VacationRequestForm: React.FC<VacationRequestFormProps> = ({
   const [formData, setFormData] = useState({
     startDate: initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
     endDate: initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
-    type: 'vacation' as const,
+    type: 'vacation' as 'vacation' | 'sick' | 'personal' | 'holiday',
     reason: '',
-    status: 'pending' as const
+    status: 'pending' as 'pending' | 'approved' | 'rejected' | 'cancelled'
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Filter, Download, Users, Calendar, CheckCircle } from 'lucide-react';
+import { Filter, Download, Calendar, CheckCircle } from 'lucide-react';
 import type { FilterOptions, TeamMember } from '../types';
-import { exportUtils } from '../utils/exportUtils';
 import styles from '../styles/FilterPanel.module.css';
 
 interface FilterPanelProps {
