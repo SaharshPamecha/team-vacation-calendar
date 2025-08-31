@@ -6,6 +6,19 @@ export interface TeamMember {
   department: string;
   avatar?: string;
   isActive: boolean;
+  managerId?: string;
+  managerName?: string;
+  jobTitle?: string;
+  hireDate?: Date;
+  annualLeaveEntitlement?: number;
+  remainingLeave?: number;
+  phone?: string;
+  address?: string;
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
 }
 
 export interface VacationRequest {
@@ -19,9 +32,17 @@ export interface VacationRequest {
   reason?: string;
   approvedBy?: string;
   approvedAt?: Date;
+  rejectedBy?: string;
+  rejectedAt?: Date;
+  rejectionReason?: string;
   createdAt: Date;
   updatedAt: Date;
   notes?: string;
+  attachments?: string[];
+  workingDays?: number;
+  isEmergency?: boolean;
+  managerComments?: string;
+  hrComments?: string;
 }
 
 export interface CalendarEvent {
@@ -97,4 +118,91 @@ export interface CompanyHoliday {
   date: Date;
   type: 'national' | 'company' | 'floating';
   isRecurring: boolean;
+}
+
+// New interfaces for enhanced functionality
+export interface Department {
+  id: string;
+  name: string;
+  managerId: string;
+  managerName: string;
+  description?: string;
+  maxConcurrentLeave: number;
+  isActive: boolean;
+}
+
+export interface ApprovalWorkflow {
+  id: string;
+  requestId: string;
+  stepNumber: number;
+  approverId: string;
+  approverName: string;
+  status: 'pending' | 'approved' | 'rejected';
+  comments?: string;
+  actionDate?: Date;
+  isRequired: boolean;
+}
+
+export interface UserPermission {
+  id: string;
+  name: string;
+  description: string;
+  category: 'calendar' | 'requests' | 'users' | 'reports' | 'settings';
+}
+
+export interface UserRole {
+  id: string;
+  name: string;
+  description: string;
+  permissions: UserPermission[];
+  isSystemRole: boolean;
+}
+
+export interface AuditLog {
+  id: string;
+  userId: string;
+  userName: string;
+  action: string;
+  entity: string;
+  entityId: string;
+  oldValues?: Record<string, any>;
+  newValues?: Record<string, any>;
+  timestamp: Date;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+export interface SystemSettings {
+  companyName: string;
+  timeZone: string;
+  workingDays: number[];
+  defaultVacationDays: number;
+  maxAdvanceBookingDays: number;
+  minNoticeHours: number;
+  allowWeekendRequests: boolean;
+  requireManagerApproval: boolean;
+  requireHRApproval: boolean;
+  emailNotifications: boolean;
+  slackIntegration: boolean;
+  confluenceIntegration: boolean;
+  jiraIntegration: boolean;
+}
+
+export interface DashboardStats {
+  totalEmployees: number;
+  activeRequests: number;
+  pendingApprovals: number;
+  upcomingVacations: number;
+  thisMonthRequests: number;
+  approvedThisMonth: number;
+  rejectedThisMonth: number;
+  averageRequestDays: number;
+}
+
+export interface ConflictCheck {
+  hasConflict: boolean;
+  conflictType: 'department_limit' | 'blackout_period' | 'holiday' | 'manager_unavailable';
+  conflictDetails: string;
+  affectedEmployees?: string[];
+  suggestion?: string;
 }

@@ -7,7 +7,12 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'john.smith@company.com',
     role: 'admin',
     department: 'Engineering',
-    isActive: true
+    isActive: true,
+    jobTitle: 'Engineering Director',
+    hireDate: new Date('2020-01-15'),
+    annualLeaveEntitlement: 25,
+    remainingLeave: 18,
+    phone: '+1-555-0101'
   },
   {
     id: '2',
@@ -15,7 +20,14 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'sarah.johnson@company.com',
     role: 'manager',
     department: 'Engineering',
-    isActive: true
+    managerId: '1',
+    managerName: 'John Smith',
+    isActive: true,
+    jobTitle: 'Senior Software Engineer',
+    hireDate: new Date('2021-03-10'),
+    annualLeaveEntitlement: 22,
+    remainingLeave: 15,
+    phone: '+1-555-0102'
   },
   {
     id: '3',
@@ -23,7 +35,14 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'mike.chen@company.com',
     role: 'employee',
     department: 'Engineering',
-    isActive: true
+    managerId: '2',
+    managerName: 'Sarah Johnson',
+    isActive: true,
+    jobTitle: 'Software Engineer',
+    hireDate: new Date('2022-06-01'),
+    annualLeaveEntitlement: 20,
+    remainingLeave: 12,
+    phone: '+1-555-0103'
   },
   {
     id: '4',
@@ -31,7 +50,14 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'emily.davis@company.com',
     role: 'employee',
     department: 'Design',
-    isActive: true
+    managerId: '6',
+    managerName: 'Lisa Anderson',
+    isActive: true,
+    jobTitle: 'UX Designer',
+    hireDate: new Date('2022-02-14'),
+    annualLeaveEntitlement: 20,
+    remainingLeave: 16,
+    phone: '+1-555-0104'
   },
   {
     id: '5',
@@ -39,7 +65,14 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'david.wilson@company.com',
     role: 'employee',
     department: 'Marketing',
-    isActive: true
+    managerId: '6',
+    managerName: 'Lisa Anderson',
+    isActive: true,
+    jobTitle: 'Marketing Specialist',
+    hireDate: new Date('2023-01-08'),
+    annualLeaveEntitlement: 18,
+    remainingLeave: 14,
+    phone: '+1-555-0105'
   },
   {
     id: '6',
@@ -47,7 +80,14 @@ export const sampleTeamMembers: TeamMember[] = [
     email: 'lisa.anderson@company.com',
     role: 'manager',
     department: 'HR',
-    isActive: true
+    managerId: '1',
+    managerName: 'John Smith',
+    isActive: true,
+    jobTitle: 'HR Manager',
+    hireDate: new Date('2019-11-20'),
+    annualLeaveEntitlement: 24,
+    remainingLeave: 19,
+    phone: '+1-555-0106'
   }
 ];
 

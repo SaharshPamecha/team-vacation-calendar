@@ -1,0 +1,4 @@
+Deployment completed at: Mon Sep  1 02:30:01 IST 2025
+Website URL: http://team-vacation-calendar-186546832638-us-east-1.s3-website-us-east-1.amazonaws.com
+Bucket: team-vacation-calendar-186546832638-us-east-1
+Region: us-east-1

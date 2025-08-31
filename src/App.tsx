@@ -1,21 +1,31 @@
 import { useState } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Calendar } from './components/Calendar';
 import { VacationRequestForm } from './components/VacationRequestForm';
 import { FilterPanel } from './components/FilterPanel';
+import { Navigation } from './components/Navigation';
+import { Login } from './components/Login';
 import type { VacationRequest, CalendarEvent, FilterOptions, TeamMember } from './types';
 import { vacationUtils } from './utils/dateUtils';
 import { exportUtils } from './utils/exportUtils';
-import { sampleTeamMembers, sampleVacationRequests, getCurrentUser } from './data/mockData';
+import { sampleTeamMembers, sampleVacationRequests } from './data/mockData';
 import './App.css';
 
-function App() {
+// Main App Component
+function AppContent() {
+  const { isAuthenticated, user } = useAuth();
+  const [currentPage, setCurrentPage] = useState('calendar');
   const [vacationRequests, setVacationRequests] = useState<VacationRequest[]>(sampleVacationRequests);
   const [teamMembers] = useState<TeamMember[]>(sampleTeamMembers);
-  const [currentUser] = useState<TeamMember>(getCurrentUser());
   const [filters, setFilters] = useState<FilterOptions>({});
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>();
+
+  // Show login if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Login />;
+  }
 
   // Convert vacation requests to calendar events
   const calendarEvents: CalendarEvent[] = vacationUtils.requestsToEvents(vacationRequests);
@@ -60,7 +70,6 @@ function App() {
     };
 
     if (selectedEvent) {
-      // Update existing request
       setVacationRequests(prev => 
         prev.map(req => 
           req.id === selectedEvent.id 
@@ -69,7 +78,6 @@ function App() {
         )
       );
     } else {
-      // Add new request
       setVacationRequests(prev => [...prev, newRequest]);
     }
   };
@@ -106,51 +114,94 @@ function App() {
   };
 
   const handleEventClick = (event: CalendarEvent) => {
-    // For now, just show event details - could open edit form if user has permission
     console.log('Event clicked:', event);
+  };
+
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'calendar':
+        return (
+          <div className="main-layout">
+            <aside className="sidebar">
+              <FilterPanel
+                filters={filters}
+                onFiltersChange={setFilters}
+                teamMembers={teamMembers}
+                onExport={handleExport}
+                onNewRequest={() => handleNewRequest()}
+              />
+            </aside>
+            <div className="calendar-container">
+              <Calendar
+                events={filteredEvents}
+                filters={filters}
+                onDateClick={handleDateClick}
+                onEventClick={handleEventClick}
+              />
+            </div>
+          </div>
+        );
+      case 'requests':
+        return <div className="page-content">Requests Management - Coming Soon</div>;
+      case 'team':
+        return <div className="page-content">Team Management - Coming Soon</div>;
+      case 'reports':
+        return <div className="page-content">Reports & Analytics - Coming Soon</div>;
+      case 'admin':
+        return <div className="page-content">Admin Panel - Coming Soon</div>;
+      case 'profile':
+        return <div className="page-content">Profile Settings - Coming Soon</div>;
+      default:
+        return (
+          <div className="main-layout">
+            <aside className="sidebar">
+              <FilterPanel
+                filters={filters}
+                onFiltersChange={setFilters}
+                teamMembers={teamMembers}
+                onExport={handleExport}
+                onNewRequest={() => handleNewRequest()}
+              />
+            </aside>
+            <div className="calendar-container">
+              <Calendar
+                events={filteredEvents}
+                filters={filters}
+                onDateClick={handleDateClick}
+                onEventClick={handleEventClick}
+              />
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <h1 className="app-title">Team Vacation Calendar</h1>
-          <p className="app-subtitle">Manage team vacations and time off requests</p>
-        </div>
-      </header>
-
+      <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
+      
       <main className="app-main">
-        <div className="main-layout">
-          <aside className="sidebar">
-            <FilterPanel
-              filters={filters}
-              onFiltersChange={setFilters}
-              teamMembers={teamMembers}
-              onExport={handleExport}
-              onNewRequest={() => handleNewRequest()}
-            />
-          </aside>
-
-          <div className="calendar-container">
-            <Calendar
-              events={filteredEvents}
-              filters={filters}
-              onDateClick={handleDateClick}
-              onEventClick={handleEventClick}
-            />
-          </div>
-        </div>
+        {renderCurrentPage()}
       </main>
 
       <VacationRequestForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
-        currentUser={currentUser}
+        currentUser={user}
         initialDate={selectedDate}
         existingRequest={selectedEvent ? vacationRequests.find(req => req.id === selectedEvent.id) : undefined}
       />
     </div>
+  );
+}
+
+// Root App with Auth Provider
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
