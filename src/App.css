@@ -1,0 +1,196 @@
+/* App Container */
+.app {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Header */
+.app-header {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Main Layout */
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.calendar-container {
+  min-height: 600px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 280px 1fr;
+    gap: 1rem;
+  }
+  
+  .app-main {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .sidebar {
+    position: static;
+    order: 2;
+  }
+  
+  .calendar-container {
+    order: 1;
+  }
+  
+  .header-content {
+    padding: 1rem;
+  }
+  
+  .app-title {
+    font-size: 1.75rem;
+  }
+  
+  .app-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-main {
+    padding: 0.75rem;
+  }
+  
+  .header-content {
+    padding: 0.75rem;
+  }
+  
+  .app-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Global Resets and Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Utility Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for accessibility */
+:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .app {
+    background: #fff;
+  }
+  
+  .app-header {
+    border-bottom: 2px solid #000;
+  }
+  
+  .app-title {
+    color: #000;
+    -webkit-text-fill-color: #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar {
+    display: none;
+  }
+  
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .app {
+    background: white;
+  }
+  
+  .app-header {
+    box-shadow: none;
+    border-bottom: 1px solid #000;
+  }
+}
