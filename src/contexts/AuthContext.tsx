@@ -10,6 +10,7 @@ interface AuthContextType extends AuthState {
   updateProfile: (userData: Partial<TeamMember>) => void;
   notifications: NotificationMessage[];
   markNotificationRead: (id: string) => void;
+  addNotification: (notification: Omit<NotificationMessage, 'id' | 'timestamp'>) => void;
   hasPermission: (permission: string) => boolean;
   isLoading: boolean;
   error: string | null;
@@ -228,6 +229,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
   };
 
+  const addNotification = (notification: Omit<NotificationMessage, 'id' | 'timestamp'>) => {
+    const fullNotification: NotificationMessage = {
+      ...notification,
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date()
+    };
+    dispatch({ type: 'ADD_NOTIFICATION', payload: fullNotification });
+  };
+
   // Role-based permission system
   const hasPermission = (permission: string): boolean => {
     if (!state.user) return false;
@@ -268,6 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     updateProfile,
     markNotificationRead,
+    addNotification,
     hasPermission
   };
 

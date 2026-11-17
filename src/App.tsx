@@ -5,6 +5,13 @@ import { VacationRequestForm } from './components/VacationRequestForm';
 import { FilterPanel } from './components/FilterPanel';
 import { Navigation } from './components/Navigation';
 import { Login } from './components/Login';
+import { ApprovalWorkflow } from './components/ApprovalWorkflow';
+import { UserManagement } from './components/UserManagement';
+import { RequestManagement } from './components/RequestManagement';
+import { ProfileSettings } from './components/ProfileSettings';
+import { ReportsAnalytics } from './components/ReportsAnalytics';
+import { TeamManagement } from './components/TeamManagement';
+import { NotificationSystem } from './components/NotificationSystem';
 import type { VacationRequest, CalendarEvent, FilterOptions, TeamMember } from './types';
 import { vacationUtils } from './utils/dateUtils';
 import { exportUtils } from './utils/exportUtils';
@@ -13,10 +20,10 @@ import './App.css';
 
 // Main App Component
 function AppContent() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, addNotification } = useAuth();
   const [currentPage, setCurrentPage] = useState('calendar');
   const [vacationRequests, setVacationRequests] = useState<VacationRequest[]>(sampleVacationRequests);
-  const [teamMembers] = useState<TeamMember[]>(sampleTeamMembers);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(sampleTeamMembers);
   const [filters, setFilters] = useState<FilterOptions>({});
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -77,8 +84,131 @@ function AppContent() {
             : req
         )
       );
+      
+      // Add notification for request update
+      addNotification({
+        type: 'info',
+        title: 'Vacation Request Updated',
+        message: `Your vacation request has been updated and is pending approval.`,
+        isRead: false
+      });
     } else {
       setVacationRequests(prev => [...prev, newRequest]);
+      
+      // Add notification for new request
+      addNotification({
+        type: 'success',
+        title: 'Vacation Request Submitted',
+        message: `Your vacation request from ${requestData.startDate.toLocaleDateString()} to ${requestData.endDate.toLocaleDateString()} has been submitted for approval.`,
+        isRead: false,
+        actionText: 'View Requests',
+        actionUrl: '/requests'
+      });
+    }
+  };
+
+  const handleApproveRequest = (requestId: string, comments?: string) => {
+    const request = vacationRequests.find(req => req.id === requestId);
+    if (request) {
+      setVacationRequests(prev => 
+        prev.map(req => 
+          req.id === requestId
+            ? { 
+                ...req, 
+                status: 'approved',
+                approvedBy: user?.name,
+                approvedAt: new Date(),
+                approvalComments: comments,
+                updatedAt: new Date()
+              }
+            : req
+        )
+      );
+      
+      // Add notification for the requester
+      addNotification({
+        type: 'success',
+        title: 'Vacation Request Approved',
+        message: `Your vacation request from ${request.startDate.toLocaleDateString()} to ${request.endDate.toLocaleDateString()} has been approved by ${user?.name}.`,
+        isRead: false,
+        actionText: 'View Calendar',
+        actionUrl: '/calendar'
+      });
+      
+      // Add notification for the approver
+      addNotification({
+        type: 'info',
+        title: 'Request Approved',
+        message: `You approved ${request.employeeName}'s vacation request.`,
+        isRead: false
+      });
+    }
+  };
+
+  const handleRejectRequest = (requestId: string, reason: string) => {
+    const request = vacationRequests.find(req => req.id === requestId);
+    if (request) {
+      setVacationRequests(prev => 
+        prev.map(req => 
+          req.id === requestId
+            ? { 
+                ...req, 
+                status: 'rejected',
+                rejectedBy: user?.name,
+                rejectedAt: new Date(),
+                rejectionReason: reason,
+                updatedAt: new Date()
+              }
+            : req
+        )
+      );
+      
+      // Add notification for the requester
+      addNotification({
+        type: 'error',
+        title: 'Vacation Request Rejected',
+        message: `Your vacation request from ${request.startDate.toLocaleDateString()} to ${request.endDate.toLocaleDateString()} has been rejected by ${user?.name}. Reason: ${reason}`,
+        isRead: false,
+        actionText: 'Submit New Request',
+        actionUrl: '/calendar'
+      });
+      
+      // Add notification for the rejector
+      addNotification({
+        type: 'info',
+        title: 'Request Rejected',
+        message: `You rejected ${request.employeeName}'s vacation request.`,
+        isRead: false
+      });
+    }
+  };
+
+  const handleUpdateRequest = (request: VacationRequest) => {
+    setVacationRequests(prev => 
+      prev.map(req => req.id === request.id ? request : req)
+    );
+  };
+
+  const handleDeleteRequest = (requestId: string) => {
+    if (window.confirm('Are you sure you want to delete this request?')) {
+      setVacationRequests(prev => prev.filter(req => req.id !== requestId));
+    }
+  };
+
+  const handleEditRequest = (request: VacationRequest) => {
+    const foundRequest = vacationRequests.find(req => req.id === request.id);
+    if (foundRequest) {
+      setSelectedEvent({
+        id: foundRequest.id,
+        title: `${foundRequest.employeeName} - ${foundRequest.type}`,
+        start: foundRequest.startDate,
+        end: foundRequest.endDate,
+        type: foundRequest.type,
+        status: foundRequest.status,
+        employeeId: foundRequest.employeeId,
+        employeeName: foundRequest.employeeName
+      });
+      setIsFormOpen(true);
     }
   };
 
@@ -142,15 +272,67 @@ function AppContent() {
           </div>
         );
       case 'requests':
-        return <div className="page-content">Requests Management - Coming Soon</div>;
+        return (
+          <div className="page-content">
+            <ApprovalWorkflow
+              requests={vacationRequests}
+              teamMembers={teamMembers}
+              onApprove={handleApproveRequest}
+              onReject={handleRejectRequest}
+              onUpdateRequest={handleUpdateRequest}
+            />
+          </div>
+        );
       case 'team':
-        return <div className="page-content">Team Management - Coming Soon</div>;
+        return (
+          <div className="page-content">
+            <TeamManagement
+              teamMembers={teamMembers}
+              onUpdateTeamMembers={setTeamMembers}
+            />
+          </div>
+        );
+      case 'requests-mgmt':
+        return (
+          <div className="page-content">
+            <RequestManagement
+              requests={vacationRequests}
+              teamMembers={teamMembers}
+              onUpdateRequest={handleUpdateRequest}
+              onDeleteRequest={handleDeleteRequest}
+              onApprove={handleApproveRequest}
+              onReject={handleRejectRequest}
+              onEditRequest={handleEditRequest}
+            />
+          </div>
+        );
       case 'reports':
-        return <div className="page-content">Reports & Analytics - Coming Soon</div>;
+        return (
+          <div className="page-content">
+            <ReportsAnalytics
+              requests={vacationRequests}
+              teamMembers={teamMembers}
+            />
+          </div>
+        );
       case 'admin':
-        return <div className="page-content">Admin Panel - Coming Soon</div>;
+        return (
+          <div className="page-content">
+            <UserManagement
+              teamMembers={teamMembers}
+              onUpdateTeamMembers={setTeamMembers}
+            />
+          </div>
+        );
       case 'profile':
-        return <div className="page-content">Profile Settings - Coming Soon</div>;
+        return (
+          <div className="page-content">
+            <ProfileSettings
+              teamMembers={teamMembers}
+              onUpdateTeamMembers={setTeamMembers}
+            />
+          </div>
+        );
       default:
         return (
           <div className="main-layout">
@@ -192,6 +374,8 @@ function AppContent() {
         initialDate={selectedDate}
         existingRequest={selectedEvent ? vacationRequests.find(req => req.id === selectedEvent.id) : undefined}
       />
+      
+      <NotificationSystem position="top-right" maxNotifications={5} autoHideDelay={5000} />
     </div>
   );
 }

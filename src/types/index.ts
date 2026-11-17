@@ -10,7 +10,9 @@ export interface TeamMember {
   managerName?: string;
   jobTitle?: string;
   hireDate?: Date;
+  startDate?: Date;
   annualLeaveEntitlement?: number;
+  vacationDays?: number;
   remainingLeave?: number;
   phone?: string;
   address?: string;
@@ -32,6 +34,7 @@ export interface VacationRequest {
   reason?: string;
   approvedBy?: string;
   approvedAt?: Date;
+  approvalComments?: string;
   rejectedBy?: string;
   rejectedAt?: Date;
   rejectionReason?: string;
@@ -102,6 +105,9 @@ export interface NotificationMessage {
   message: string;
   timestamp: Date;
   isRead: boolean;
+  actionText?: string;
+  actionUrl?: string;
+  persistent?: boolean;
 }
 
 export interface VacationStats {
